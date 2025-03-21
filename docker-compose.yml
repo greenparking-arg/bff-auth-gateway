@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  bff-auth-gateway:
+    ports:
+      - "5500:5500"
+    container_name: bff-auth-gateway
+    restart: always
+    platform: linux/amd64
+    image: facilparking/bff-auth-gateway:${IMAGE}
+    environment:
+      PORT: "5500"
+      THROTTLE_TTL: "60000"
+      THROTTLE_LIMIT: "200"
+      HTTPCLIENT_ATTEMPTS: 4
+      JWT_SECRET: $JWT_SECRET
+      JWT_SECRET_EXPIRES_IN: "1 days"
+      JWT_SECRET_EXPIRES_REFRESH_IN: "15 days"
+      JWT_SECRET_ATTEMPTS_REFRESH_IN: 1
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      URL_GATEWAY: "http://192.169.5.2:5501/api/v1"
+      URL_MS_USERS: "http://192.169.5.3:5502/api/v1"
+      URL_MS_REPORTS: "http://192.169.5.4:5503/api/v1"
+      URL_MS_S3: "http://192.169.5.5:5504/api/v1"
+      APIKEY_S3: $APIKEY_S3
+      S3_URL: $S3_URL
+      S3_ENDPOINT: $S3_ENDPOINT
+      S3_REGION: $S3_REGION
+      S3_ACCESS_BUCKET: $S3_ACCESS_BUCKET
+      S3_ACCESS_KEY_ID: $S3_ACCESS_KEY_ID
+      S3_SECRET_ACCESS_KEY: $S3_SECRET_ACCESS_KEY
+      SEND_GRID_API_KEY: $SEND_GRID_API_KEY
+      RECOVERY_PASSWORD_PUBLIC_URL: ""
+      GOOGLE_RECAPTCHA_SECRET_KEY: ${GOOGLE_RECAPTCHA_SECRET_KEY}
+    networks:
+      FP_NETWORK:
+        ipv4_address: 192.169.5.1
+
+networks:
+  FP_NETWORK:
+    external: true
