@@ -4,7 +4,7 @@ MAINTAINER Andres Olivares
 
 WORKDIR /src
 
-COPY package.json .npmrc ./
+COPY package.json .
 
 COPY . .
 
