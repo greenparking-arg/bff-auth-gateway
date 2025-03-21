@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Rol } from './rol.entity';
 import { PersonalToken } from './personal-token.entity';
-import { PasswordResetToken } from '../auth/schemas/password-reset-token.schema';
+import { PasswordResetToken } from './password-reset-token.entity';
 
 @Entity('usuarios')
 export class User {
