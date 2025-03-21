@@ -41,7 +41,7 @@ import { MsS3Middleware } from './middleware/ms-s3.middleware';
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'], // Carga automática de entidades
-        synchronize: true, // Sincroniza las entidades (solo para desarrollo)
+        synchronize: false, // Sincroniza las entidades (solo para desarrollo)
         ssl: {
           rejectUnauthorized: false,
         },
