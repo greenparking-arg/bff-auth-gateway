@@ -108,16 +108,16 @@ export class UsersService {
     }
     this.logger.log(`Buscando permisos para el rol con ID: ${role.id}`);
     try {
-      const roleWithPermisoss = await this.rolRepository.findOne({
+      const roleWithPermisos = await this.rolRepository.findOne({
         where: { id: role.id },
-        relations: ['Permisoss'],
+        relations: ['Permisos'],
       });
-      if (roleWithPermisoss) {
+      if (roleWithPermisos) {
         this.logger.log(`Permisos encontrados para el rol con ID: ${role.id}`);
       } else {
         this.logger.log(`No se encontró rol con ID: ${role.id}`);
       }
-      return roleWithPermisoss;
+      return roleWithPermisos;
     } catch (error) {
       this.logger.error(`Error al buscar permisos para el rol con ID: ${role.id}`, error.stack);
       throw error;
