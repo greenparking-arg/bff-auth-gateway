@@ -37,34 +37,6 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   URL_GATEWAY: string;
-
-  @IsString()
-  @IsNotEmpty()
-  APIKEY_S3: string;
-
-  @IsString()
-  @IsNotEmpty()
-  S3_URL: string;
-
-  @IsString()
-  @IsNotEmpty()
-  S3_ENDPOINT: string;
-
-  @IsString()
-  @IsNotEmpty()
-  S3_REGION: string;
-
-  @IsString()
-  @IsNotEmpty()
-  S3_ACCESS_BUCKET: string;
-
-  @IsString()
-  @IsNotEmpty()
-  S3_ACCESS_KEY_ID: string;
-
-  @IsString()
-  @IsNotEmpty()
-  S3_SECRET_ACCESS_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
