@@ -23,7 +23,7 @@ export class UsersController {
 
   @HttpCode(HttpStatus.OK)
   @Get(':id')
-  findUserById(@Param('id') id: string) {
+  findUserById(@Param('id') id: number) {
     return this.usersService.findById(id);
   }
 }
