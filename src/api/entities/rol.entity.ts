@@ -14,6 +14,16 @@ export class Rol {
   usuarios: User[];
 
   @ManyToMany(() => Permisos, (permiso) => permiso.roles)
-  @JoinTable() // Crea una tabla de unión automáticamente (ej. roles_permisos)
+  @JoinTable({
+    name: 'roles_permisos', // Nombre de la tabla de unión
+    joinColumn: {
+      name: 'rol_id', // Columna que referencia a Rol
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'permisos_id', // Columna que referencia a Permisos
+      referencedColumnName: 'id',
+    },
+  })
   permisos: Permisos[];
 }
