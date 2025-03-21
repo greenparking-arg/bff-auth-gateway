@@ -5,13 +5,12 @@ import { Rol } from '../entities/rol.entity'; // Ajusta la ruta
 import { Permission } from '../entities/permission.entity'; // Ajusta la ruta
 import { PersonalToken } from '../entities/personal-token.entity'; // Ajusta la ruta
 import { UsersService } from './users.service';
-import { UploadFilesService } from 'src/services/upload-files.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Rol, Permission, PersonalToken]),
   ],
-  providers: [UsersService, UploadFilesService],
+  providers: [UsersService],
   exports: [UsersService],
 })
 export class UsersModule {}
