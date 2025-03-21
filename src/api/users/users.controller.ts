@@ -14,7 +14,7 @@ export class UsersController {
     return this.usersService.checkIfExists(userIdentifier, email);
   }
 
-  @Public() // Elimina @Public() si requiere autenticación
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
