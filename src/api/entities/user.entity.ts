@@ -27,6 +27,6 @@ export class User {
   @OneToMany(() => PersonalToken, (personalToken) => personalToken.user) // Agregado
   personalTokens: PersonalToken[];
 
-  @OneToMany(() => PasswordResetToken, (passwordResetToken) => passwordResetToken.user)
+  @OneToMany(() => PasswordResetToken, (token) => token.user)
   passwordResetTokens: PasswordResetToken[];
 }
