@@ -1,4 +1,4 @@
-export interface Permiso {
+export interface Permisos {
   id: number;
   nombre_publico: string;
   nombre: string;

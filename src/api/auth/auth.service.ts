@@ -21,7 +21,7 @@ export interface Payload {
   role: Rol;
   value: string;
   createToken: any;
-  permissions: string[]; // Ajusta según el tipo real de permissions
+  permisos: string[]; // Ajusta según el tipo real de permisos
 }
 
 @Injectable()
@@ -62,7 +62,7 @@ export class AuthService {
       role: user.rol,
       value: uuidv4(),
       createToken: dayjs().unix(),
-      permissions: role?.permisos?.length ? role.permisos.map((value) => value.nombre) : [],
+      permisos: role?.permisos?.length ? role.permisos.map((value) => value.nombre) : [],
     };
 
     return pd;

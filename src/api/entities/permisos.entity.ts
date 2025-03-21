@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('permissions') // Nombre de la tabla en PostgreSQL
-export class Permission {
+@Entity('permisos') // Nombre de la tabla en PostgreSQL
+export class Permisos {
   @PrimaryGeneratedColumn() // Clave primaria de tipo UUID
   id: number;
 
@@ -12,5 +12,5 @@ export class Permission {
   name: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  group_permissions: string;
+  group_permisos: string;
 }

@@ -1,17 +1,17 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type PermissionDocument = Permission & Document;
+export type PermisosDocument = Permisos & Document;
 
-export interface PermissionModelInterface {
+export interface PermisosModelInterface {
   _id?: any;
   name: string;
   name_public: string;
-  group_permissions?: string;
+  group_permisos?: string;
 }
 
 @Schema()
-export class Permission extends Document {
+export class Permisos extends Document {
   @Prop()
   name_public: string;
 
@@ -19,7 +19,7 @@ export class Permission extends Document {
   name: string;
 
   @Prop()
-  group_permissions: string;
+  group_permisos: string;
 }
 
-export const PermissionSchema = SchemaFactory.createForClass(Permission);
+export const permisoschema = SchemaFactory.createForClass(Permisos);

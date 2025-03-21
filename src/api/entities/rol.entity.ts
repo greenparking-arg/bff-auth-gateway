@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { User } from './user.entity';
-import { Permiso } from '../interfaces/permissions.interface';
+import { Permisos } from './permisos.entity';
 
 @Entity('roles')
 export class Rol {
@@ -14,5 +14,5 @@ export class Rol {
   usuarios: User[];
 
   @Column({ type: 'jsonb', nullable: true })
-  permisos: Permiso[]; // Ejemplo: { 'users': ['create', 'read', 'update', 'delete'] }
+  permisos: Permisos[]; // Ejemplo: { 'users': ['create', 'read', 'update', 'delete'] }
 }

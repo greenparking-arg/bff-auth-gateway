@@ -52,7 +52,7 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: { email },
-      relations: ['rol','municipio'],
+      relations: ['rol', 'municipio'],
     });
   }
 
@@ -67,18 +67,18 @@ export class UsersService {
   }
 
   /**
-   * Finds a permission based on the given role.
+   * Finds a Permisos based on the given role.
    *
-   * @param {Rol} role - The role to search for permissions.
+   * @param {Rol} role - The role to search for permisos.
    */
-  async findByRolePermission(role?: Rol) {
+  async findByRolePermisos(role?: Rol) {
     if (!role) {
       return undefined;
     }
 
     return this.rolRepository.findOne({
       where: { id: role.id },
-      relations: ['permissions'], // Ajusta según las relaciones en tu entidad
+      relations: ['permisos'], // Ajusta según las relaciones en tu entidad
     });
   }
 

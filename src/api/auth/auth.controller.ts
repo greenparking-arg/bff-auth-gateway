@@ -43,7 +43,7 @@ export class AuthController {
       throw new UnauthorizedException('Incorrect User or Password.');
     }
 
-    const role: any | Rol = await this.userService.findByRolePermission(user?.rol);
+    const role: any | Rol = await this.userService.findByRolePermisos(user?.rol);
 
     if (!role) {
       throw new BadRequestException('The user is blocked, please contact your administrator.');
@@ -67,7 +67,7 @@ export class AuthController {
 
     this.authService.validateUser(user);
 
-    const role: any = await this.userService.findByRolePermission(user?.rol);
+    const role: any = await this.userService.findByRolePermisos(user?.rol);
 
     return this.authService.generateAccessToken(user, role, true);
   }
