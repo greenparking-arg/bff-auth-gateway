@@ -14,7 +14,6 @@ import { ContactService } from '../contact/contact.service';
 import * as crypto from 'node:crypto';
 import { CreatePdfService } from '../../services/create-pdf.service';
 
-
 export interface Payload {
   id: string;
   name: string;
@@ -154,11 +153,9 @@ export class AuthService {
       throw new UnauthorizedException('Incorrect User or Password.');
     }
 
-    if (!user.rol)
-      throw new BadRequestException('The user is blocked, please contact your administrator.');
+    if (!user.rol) throw new BadRequestException('The user is blocked, please contact your administrator.');
 
     this.logger.debug(user);
-
   }
 
   /**
@@ -172,36 +169,36 @@ export class AuthService {
       this.logger.error(`${email.toLowerCase()} The email is not registered.`);
       return;
     }
-  
+
     const token = crypto.randomBytes(20).toString('hex');
-  
+
     // Crear una nueva instancia de PasswordResetToken usando TypeORM
     const resetToken = this.passwordResetTokenRepository.create({
       token,
       user, // Pasamos la instancia completa de User (si la relación está definida)
     });
-  
+
     // Guardar el token en la base de datos
     await this.passwordResetTokenRepository.save(resetToken);
-  
+
     const configuration = {
       logo: this.configService.get('APP_LOGO'),
       color: this.configService.get('APP_COLOR'),
       passwordLink: this.configService.get('RECOVERY_PASSWORD_PUBLIC_URL'),
     };
-  
+
     this.logger.log(`configuration.passwordLink: ${configuration.passwordLink}`);
-  
+
     const data = {
       logo: configuration.logo || '',
       usuario: `${user.nombre || ''}`,
       reset_url: `${configuration.passwordLink}/${token}`,
     };
-  
+
     this.logger.log(`data.reset_url: ${data.reset_url}`);
-  
+
     const htmlData = this.createPdfService.renderTemplateComponent('../templates/password-reset.template.hbs', data);
-  
+
     await this.contactService.sendPasswordRecovery(
       user.email,
       'Facil Parking: Pedido de cambio de contraseña 🔑',
@@ -220,27 +217,26 @@ export class AuthService {
       where: { token },
       relations: ['user'], // Cargar la relación con User
     });
-  
+
     if (!resetToken || resetToken.used) {
       this.logger.error('Invalid or expired password reset token');
       throw new Error('Invalid or expired password reset token');
     }
-  
+
     // Pasar el ID del usuario en lugar de la instancia completa
     const user = await this.usersService.findById(resetToken.user.id);
-  
+
     if (!user) {
       this.logger.error('User not found');
       throw new Error('Invalid User or expired password reset token');
     }
-  
+
     user.password = await bcrypt.hash(newPassword, 10);
     await this.usersService.userRepository.save(user);
-  
+
     resetToken.used = true;
     await this.passwordResetTokenRepository.save(resetToken);
-  
+
     return;
   }
-
 }

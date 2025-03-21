@@ -7,9 +7,7 @@ import { PersonalToken } from '../entities/personal-token.entity'; // Ajusta la 
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User, Rol, Permission, PersonalToken]),
-  ],
+  imports: [TypeOrmModule.forFeature([User, Rol, Permission, PersonalToken])],
   providers: [UsersService],
   exports: [UsersService],
 })

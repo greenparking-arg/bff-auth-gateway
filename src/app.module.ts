@@ -29,7 +29,8 @@ import { MsS3Middleware } from './middleware/ms-s3.middleware';
     }),
     Throttler,
     JwtRegister,
-    TypeOrmModule.forRootAsync({ // Configuración de TypeORM
+    TypeOrmModule.forRootAsync({
+      // Configuración de TypeORM
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -47,12 +48,7 @@ import { MsS3Middleware } from './middleware/ms-s3.middleware';
     UsersModule,
     ContactModule,
   ],
-  controllers: [
-    AppController,
-    GatewayController,
-    MsReportsController,
-    UsersController,
-  ],
+  controllers: [AppController, GatewayController, MsReportsController, UsersController],
   providers: [
     AppService,
     {
@@ -67,11 +63,7 @@ import { MsS3Middleware } from './middleware/ms-s3.middleware';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    const controllers = [
-      GatewayController,
-      MsReportsController,
-      MsS3Controller,
-    ];
+    const controllers = [GatewayController, MsReportsController, MsS3Controller];
 
     controllers.forEach((controller) => {
       consumer.apply(AuthMiddleware).forRoutes(controller);

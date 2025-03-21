@@ -26,5 +26,4 @@ export class UsersController {
   findUserById(@Param('id') id: string) {
     return this.usersService.findById(id);
   }
-
 }

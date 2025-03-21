@@ -31,11 +31,8 @@ export class UsersService {
    * @param {Payload} payload - The payload containing user details and the new token value.
    */
   async createActivePersonalToken(payload: Payload) {
-    await this.personalTokenRepository.update(
-      { user: { id: payload.id }, active: true },
-      { active: false },
-    );
-  
+    await this.personalTokenRepository.update({ user: { id: payload.id }, active: true }, { active: false });
+
     const data = this.personalTokenRepository.create({
       token: payload.value,
       lastSession: dayjs().toISOString(),
@@ -97,10 +94,7 @@ export class UsersService {
     });
 
     if (!personalToken || !personalToken.active || personalToken.attempts !== 0) {
-      await this.personalTokenRepository.update(
-        { user: { id: payload.id }, active: true },
-        { active: false },
-      );
+      await this.personalTokenRepository.update({ user: { id: payload.id }, active: true }, { active: false });
       return null;
     }
 
@@ -144,9 +138,9 @@ export class UsersService {
     try {
       const userIdentifierExists = await this.userRepository.findOne({ where: { dni: userIdentifier } });
       const emailExists = await this.userRepository.findOne({ where: { email } });
-  
+
       const exists = !!(userIdentifierExists || emailExists);
-  
+
       return {
         exists,
         userIdentifierExists: !!userIdentifierExists,
@@ -157,10 +151,7 @@ export class UsersService {
         `Error checking existence of user with userIdentifier ${userIdentifier} or email ${email}: ${e.message}`,
         e.stack,
       );
-      throw new HttpException(
-        'Número de documento o correo ya registrado',
-        HttpStatus.OK,
-      );
+      throw new HttpException('Número de documento o correo ya registrado', HttpStatus.OK);
     }
   }
 
@@ -173,17 +164,17 @@ export class UsersService {
    */
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { nombre, email, password, rolId, dni } = createUserDto;
-  
+
     // Verificar si el email ya existe
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
       throw new BadRequestException('El email ya está registrado');
     }
-  
+
     // Hashear la contraseña
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
-  
+
     // Crear el nuevo usuario
     const user = this.userRepository.create({
       nombre,
@@ -192,11 +183,11 @@ export class UsersService {
       rol: { id: rolId },
       dni,
     });
-  
+
     return this.userRepository.save(user);
   }
 
-    /**
+  /**
    * Refreshes the active personal token for the specified user.
    * If an active token exists, it updates its properties (lastSession and attempts).
    * If no active token exists, it creates a new one.
