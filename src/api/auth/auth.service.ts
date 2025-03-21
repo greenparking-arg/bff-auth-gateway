@@ -62,7 +62,7 @@ export class AuthService {
       role: user.rol,
       value: uuidv4(),
       createToken: dayjs().unix(),
-      permisos: role?.permisos?.length ? role.permisos.map((value) => value.nombre) : [],
+      permisos: role?.permisos?.length ? role.permisos.map((value) => value.name_public) : [],
     };
 
     return pd;
