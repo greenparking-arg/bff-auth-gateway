@@ -12,7 +12,6 @@ import { UsersService } from '../users/users.service';
 import { PasswordResetToken } from './schemas/password-reset-token.schema';
 import { ContactService } from '../contact/contact.service';
 import * as crypto from 'node:crypto';
-import { CreatePdfService } from '../../services/create-pdf.service';
 
 export interface Payload {
   id: string;
@@ -33,7 +32,6 @@ export class AuthService {
     private configService: ConfigService,
     private usersService: UsersService,
     private contactService: ContactService,
-    private createPdfService: CreatePdfService,
     @InjectRepository(PasswordResetToken)
     private readonly passwordResetTokenRepository: Repository<PasswordResetToken>,
   ) {}
