@@ -8,6 +8,7 @@ import { PasswordResetToken } from '../entities/password-reset-token.entity'; //
 import { ContactService } from '../contact/contact.service';
 import Handlebars from 'handlebars';
 import { HANDLEBARS } from '../../constants/handlebar.constants';
+import { CreatePdfService } from '../../services/create-pdf.service';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { HANDLEBARS } from '../../constants/handlebar.constants';
   providers: [
     AuthService,
     ContactService,
+    CreatePdfService,
     {
       provide: HANDLEBARS,
       useFactory: () => {
