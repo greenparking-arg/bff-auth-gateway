@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity('password_reset_token')
+@Entity('password_reset_tokens')
 export class PasswordResetToken {
   @Column({ primary: true })
   token: string;
