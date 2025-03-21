@@ -30,12 +30,11 @@ export class UsersService {
    * @returns {Promise<PersonalToken>} - El token personal creado.
    */
   async createActivePersonalToken(payload: Payload): Promise<PersonalToken> {
-    this.logger.log(`Creando token personal activo para el usuario con ID: ${payload.id}, valor del token: ${payload.value}`);
+    this.logger.log(
+      `Creando token personal activo para el usuario con ID: ${payload.id}, valor del token: ${payload.value}`,
+    );
     try {
-      await this.personalTokenRepository.update(
-        { user: { id: payload.id }, active: true },
-        { active: false },
-      );
+      await this.personalTokenRepository.update({ user: { id: payload.id }, active: true }, { active: false });
       const data = this.personalTokenRepository.create({
         token: payload.value,
         lastSession: dayjs().toISOString(),
@@ -102,23 +101,23 @@ export class UsersService {
    * @param {Rol} role - El rol para buscar permisos.
    * @returns {Promise<Rol | undefined>} - El rol con permisos o undefined si no se proporciona rol.
    */
-  async findByRolePermission(role?: Rol): Promise<Rol | undefined> {
+  async findByRolePermisos(role?: Rol): Promise<Rol | undefined> {
     if (!role) {
       this.logger.log('No se proporcionó un rol para buscar permisos');
       return undefined;
     }
     this.logger.log(`Buscando permisos para el rol con ID: ${role.id}`);
     try {
-      const roleWithPermissions = await this.rolRepository.findOne({
+      const roleWithPermisoss = await this.rolRepository.findOne({
         where: { id: role.id },
-        relations: ['permissions'],
+        relations: ['Permisoss'],
       });
-      if (roleWithPermissions) {
+      if (roleWithPermisoss) {
         this.logger.log(`Permisos encontrados para el rol con ID: ${role.id}`);
       } else {
         this.logger.log(`No se encontró rol con ID: ${role.id}`);
       }
-      return roleWithPermissions;
+      return roleWithPermisoss;
     } catch (error) {
       this.logger.error(`Error al buscar permisos para el rol con ID: ${role.id}`, error.stack);
       throw error;
@@ -138,10 +137,7 @@ export class UsersService {
       });
       if (!personalToken || !personalToken.active || personalToken.attempts !== 0) {
         this.logger.log(`Token inválido o inactivo: ${payload.value}`);
-        await this.personalTokenRepository.update(
-          { user: { id: payload.id }, active: true },
-          { active: false },
-        );
+        await this.personalTokenRepository.update({ user: { id: payload.id }, active: true }, { active: false });
         return null;
       }
       const user = await this.userRepository.findOne({
