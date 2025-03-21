@@ -25,107 +25,163 @@ export class UsersService {
   ) {}
 
   /**
-   * Creates a new active personal token for the specified user by deactivating any existing active tokens
-   * and storing the new token in the database.
-   *
-   * @param {Payload} payload - The payload containing user details and the new token value.
+   * Crea un nuevo token personal activo para el usuario especificado, desactivando cualquier token activo existente.
+   * @param {Payload} payload - El payload con los detalles del usuario y el valor del nuevo token.
+   * @returns {Promise<PersonalToken>} - El token personal creado.
    */
-  async createActivePersonalToken(payload: Payload) {
-    await this.personalTokenRepository.update({ user: { id: payload.id }, active: true }, { active: false });
-
-    const data = this.personalTokenRepository.create({
-      token: payload.value,
-      lastSession: dayjs().toISOString(),
-      active: true,
-      attempts: 0,
-      user: { id: payload.id },
-    });
-    return this.personalTokenRepository.save(data);
+  async createActivePersonalToken(payload: Payload): Promise<PersonalToken> {
+    this.logger.log(`Creando token personal activo para el usuario con ID: ${payload.id}, valor del token: ${payload.value}`);
+    try {
+      await this.personalTokenRepository.update(
+        { user: { id: payload.id }, active: true },
+        { active: false },
+      );
+      const data = this.personalTokenRepository.create({
+        token: payload.value,
+        lastSession: dayjs().toISOString(),
+        active: true,
+        attempts: 0,
+        user: { id: payload.id },
+      });
+      const savedToken = await this.personalTokenRepository.save(data);
+      this.logger.log(`Token personal activo creado exitosamente para el usuario con ID: ${payload.id}`);
+      return savedToken;
+    } catch (error) {
+      this.logger.error(`Error al crear token personal activo para el usuario con ID: ${payload.id}`, error.stack);
+      throw error;
+    }
   }
 
   /**
-   * Finds a user by their email.
-   *
-   * @param {string} email - The email of the user to find.
-   * @returns {Promise<User | null>} - A promise that resolves with a User object if found, or null if not found.
+   * Busca un usuario por su email.
+   * @param {string} email - El email del usuario a buscar.
+   * @returns {Promise<User | null>} - El usuario encontrado o null si no existe.
    */
   async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOne({
-      where: { email },
-      relations: ['rol', 'municipio'],
-    });
+    this.logger.log(`Buscando usuario por email: ${email}`);
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email },
+        relations: ['rol', 'company', 'logisticsCompany'],
+      });
+      if (user) {
+        this.logger.log(`Usuario encontrado con email: ${email}`);
+      } else {
+        this.logger.log(`No se encontró usuario con email: ${email}`);
+      }
+      return user;
+    } catch (error) {
+      this.logger.error(`Error al buscar usuario por email: ${email}`, error.stack);
+      throw error;
+    }
   }
 
   /**
-   * Finds a user by their unique identifier.
-   *
-   * @param {number} id - The unique identifier of the user.
-   * @return {Promise<User | null>} A promise that resolves to the user if found, or null if not found.
+   * Busca un usuario por su ID.
+   * @param {number} id - El ID del usuario a buscar.
+   * @returns {Promise<User | null>} - El usuario encontrado o null si no existe.
    */
   async findById(id: number): Promise<User | null> {
-    return this.userRepository.findOne({ where: { id } });
+    this.logger.log(`Buscando usuario por ID: ${id}`);
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (user) {
+        this.logger.log(`Usuario encontrado con ID: ${id}`);
+      } else {
+        this.logger.log(`No se encontró usuario con ID: ${id}`);
+      }
+      return user;
+    } catch (error) {
+      this.logger.error(`Error al buscar usuario por ID: ${id}`, error.stack);
+      throw error;
+    }
   }
 
   /**
-   * Finds a Permisos based on the given role.
-   *
-   * @param {Rol} role - The role to search for permisos.
+   * Busca permisos basados en un rol.
+   * @param {Rol} role - El rol para buscar permisos.
+   * @returns {Promise<Rol | undefined>} - El rol con permisos o undefined si no se proporciona rol.
    */
-  async findByRolePermisos(role?: Rol) {
+  async findByRolePermission(role?: Rol): Promise<Rol | undefined> {
     if (!role) {
+      this.logger.log('No se proporcionó un rol para buscar permisos');
       return undefined;
     }
-
-    return this.rolRepository.findOne({
-      where: { id: role.id },
-      relations: ['permisos'], // Ajusta según las relaciones en tu entidad
-    });
+    this.logger.log(`Buscando permisos para el rol con ID: ${role.id}`);
+    try {
+      const roleWithPermissions = await this.rolRepository.findOne({
+        where: { id: role.id },
+        relations: ['permissions'],
+      });
+      if (roleWithPermissions) {
+        this.logger.log(`Permisos encontrados para el rol con ID: ${role.id}`);
+      } else {
+        this.logger.log(`No se encontró rol con ID: ${role.id}`);
+      }
+      return roleWithPermissions;
+    } catch (error) {
+      this.logger.error(`Error al buscar permisos para el rol con ID: ${role.id}`, error.stack);
+      throw error;
+    }
   }
 
   /**
-   * Finds a user by their personal token.
-   *
-   * @param {Payload} payload - The payload containing the user's personal token and ID.
-   * @return {Promise<User | null>} - The user associated with the token, or null if the token is invalid or inactive.
+   * Busca un usuario por su token personal.
+   * @param {Payload} payload - El payload con el token personal y el ID del usuario.
+   * @returns {Promise<User | null>} - El usuario asociado al token o null si es inválido/inactivo.
    */
   async findByUserTokenPersonal(payload: Payload): Promise<User | null> {
-    const personalToken = await this.personalTokenRepository.findOne({
-      where: { token: payload.value },
-    });
-
-    if (!personalToken || !personalToken.active || personalToken.attempts !== 0) {
-      await this.personalTokenRepository.update({ user: { id: payload.id }, active: true }, { active: false });
-      return null;
+    this.logger.log(`Buscando usuario por token personal: ${payload.value}`);
+    try {
+      const personalToken = await this.personalTokenRepository.findOne({
+        where: { token: payload.value },
+      });
+      if (!personalToken || !personalToken.active || personalToken.attempts !== 0) {
+        this.logger.log(`Token inválido o inactivo: ${payload.value}`);
+        await this.personalTokenRepository.update(
+          { user: { id: payload.id }, active: true },
+          { active: false },
+        );
+        return null;
+      }
+      const user = await this.userRepository.findOne({
+        where: { id: personalToken.user.id },
+        relations: ['rol', 'company', 'logisticsCompany'],
+      });
+      this.logger.log(`Usuario encontrado para el token: ${payload.value}`);
+      return user;
+    } catch (error) {
+      this.logger.error(`Error al buscar usuario por token personal: ${payload.value}`, error.stack);
+      throw error;
     }
-
-    return this.userRepository.findOne({
-      where: { id: personalToken.user.id },
-      relations: ['rol', 'municipio'], // Ajusta según las relaciones
-    });
   }
 
   /**
-   * Inactivates all active personal tokens for a given user.
-   *
-   * @param {Payload} payload - The payload containing the user's ID whose personal tokens are to be inactivated.
-   * @return {Promise<boolean>} - A Promise that resolves to true if one or more tokens were inactivated, otherwise false.
+   * Inactiva todos los tokens personales activos de un usuario.
+   * @param {Payload} payload - El payload con el ID del usuario.
+   * @returns {Promise<boolean>} - True si se inactivaron tokens, false si no.
    */
   async findByUserTokenPersonalLogout(payload: Payload): Promise<boolean> {
-    const updateResult = await this.personalTokenRepository.update(
-      { user: { id: payload.id }, active: true },
-      { active: false },
-    );
-
-    return updateResult.affected > 0;
+    this.logger.log(`Inactivando tokens personales activos para el usuario con ID: ${payload.id}`);
+    try {
+      const updateResult = await this.personalTokenRepository.update(
+        { user: { id: payload.id }, active: true },
+        { active: false },
+      );
+      const success = updateResult.affected > 0;
+      this.logger.log(`Tokens personales inactivados para el usuario con ID: ${payload.id}: ${success}`);
+      return success;
+    } catch (error) {
+      this.logger.error(`Error al inactivar tokens personales para el usuario con ID: ${payload.id}`, error.stack);
+      throw error;
+    }
   }
 
   /**
-   * Checks if a user exists by its user identifier and email.
-   *
-   * @param {string} userIdentifier - The business identifier of the user.
-   * @param {string} email - The business identifier of the user.
-   * @returns {Promise<{ exists: boolean; userIdentifierExists: boolean; emailExists: boolean }>} - An object indicating whether the userIdentifier or email exists.
-   * @throws {HttpException} - If the database query fails.
+   * Verifica si un usuario existe por su identificador o email.
+   * @param {string} userIdentifier - El identificador del usuario (DNI).
+   * @param {string} email - El email del usuario.
+   * @returns {Promise<{ exists: boolean; userIdentifierExists: boolean; emailExists: boolean }>} - Resultado de la verificación.
    */
   async checkIfExists(
     userIdentifier: string,
@@ -135,88 +191,93 @@ export class UsersService {
     userIdentifierExists: boolean;
     emailExists: boolean;
   }> {
+    this.logger.log(`Verificando existencia de usuario con identificador: ${userIdentifier} o email: ${email}`);
     try {
       const userIdentifierExists = await this.userRepository.findOne({ where: { dni: userIdentifier } });
       const emailExists = await this.userRepository.findOne({ where: { email } });
-
       const exists = !!(userIdentifierExists || emailExists);
-
+      this.logger.log(
+        `Resultado de la verificación: exists=${exists}, identificador=${!!userIdentifierExists}, email=${!!emailExists}`,
+      );
       return {
         exists,
         userIdentifierExists: !!userIdentifierExists,
         emailExists: !!emailExists,
       };
-    } catch (e) {
+    } catch (error) {
       this.logger.error(
-        `Error checking existence of user with userIdentifier ${userIdentifier} or email ${email}: ${e.message}`,
-        e.stack,
+        `Error al verificar existencia de usuario con identificador: ${userIdentifier} o email: ${email}`,
+        error.stack,
       );
       throw new HttpException('Número de documento o correo ya registrado', HttpStatus.OK);
     }
   }
 
   /**
-   * Creates a new user based on the provided CreateUserDto.
-   *
-   * @param {CreateUserDto} createUserDto - The data transfer object containing user creation data.
-   * @returns {Promise<User>} - The newly created user.
-   * @throws {BadRequestException} - If the email is already registered.
+   * Crea un nuevo usuario basado en el DTO proporcionado.
+   * @param {CreateUserDto} createUserDto - El DTO con los datos del usuario.
+   * @returns {Promise<User>} - El usuario creado.
+   * @throws {BadRequestException} - Si el email ya está registrado.
    */
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const { nombre, email, password, rolId, dni, municipioId } = createUserDto;
-
-    // Verificar si el email ya existe
-    const existingUser = await this.userRepository.findOne({ where: { email } });
-    if (existingUser) {
-      throw new BadRequestException('El email ya está registrado');
+    const { nombre, email, password, rolId, dni } = createUserDto;
+    this.logger.log(`Creando usuario con email: ${email}, identificador: ${dni}`);
+    try {
+      const existingUser = await this.userRepository.findOne({ where: { email } });
+      if (existingUser) {
+        this.logger.warn(`Email ya registrado: ${email}`);
+        throw new BadRequestException('El email ya está registrado');
+      }
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
+      const user = this.userRepository.create({
+        nombre,
+        email,
+        password: hashedPassword,
+        rol: { id: rolId },
+        dni,
+      });
+      const savedUser = await this.userRepository.save(user);
+      this.logger.log(`Usuario creado exitosamente con email: ${email}`);
+      return savedUser;
+    } catch (error) {
+      this.logger.error(`Error al crear usuario con email: ${email}`, error.stack);
+      throw error;
     }
-
-    // Hashear la contraseña
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Crear el nuevo usuario
-    const user = this.userRepository.create({
-      nombre,
-      email,
-      password: hashedPassword,
-      rol: { id: rolId },
-      municipio: { id: municipioId },
-      dni,
-    });
-
-    return this.userRepository.save(user);
   }
 
   /**
-   * Refreshes the active personal token for the specified user.
-   * If an active token exists, it updates its properties (lastSession and attempts).
-   * If no active token exists, it creates a new one.
-   *
-   * @param {Payload} payload - The payload containing user details and the new token value.
-   * @returns {Promise<PersonalToken>} - The refreshed or newly created personal token.
+   * Refresca el token personal activo de un usuario. Si existe, lo actualiza; si no, crea uno nuevo.
+   * @param {Payload} payload - El payload con los detalles del usuario y el valor del token.
+   * @returns {Promise<PersonalToken>} - El token personal actualizado o creado.
    */
   async refreshActivePersonalToken(payload: Payload): Promise<PersonalToken> {
-    // Buscar el token personal activo para el usuario
-    const activeToken = await this.personalTokenRepository.findOne({
-      where: { user: { id: payload.id }, active: true },
-    });
-
-    if (activeToken) {
-      // Si existe un token activo, actualizar sus propiedades
-      activeToken.lastSession = dayjs().toISOString();
-      activeToken.attempts = 0; // Reiniciar intentos, ajusta según tu lógica
-      return this.personalTokenRepository.save(activeToken);
-    } else {
-      // Si no existe un token activo, crear uno nuevo
-      const newToken = this.personalTokenRepository.create({
-        token: payload.value,
-        lastSession: dayjs().toISOString(),
-        active: true,
-        attempts: 0,
-        user: { id: payload.id },
+    this.logger.log(`Refrescando token personal activo para el usuario con ID: ${payload.id}`);
+    try {
+      const activeToken = await this.personalTokenRepository.findOne({
+        where: { user: { id: payload.id }, active: true },
       });
-      return this.personalTokenRepository.save(newToken);
+      if (activeToken) {
+        activeToken.lastSession = dayjs().toISOString();
+        activeToken.attempts = 0;
+        const updatedToken = await this.personalTokenRepository.save(activeToken);
+        this.logger.log(`Token personal activo refrescado para el usuario con ID: ${payload.id}`);
+        return updatedToken;
+      } else {
+        const newToken = this.personalTokenRepository.create({
+          token: payload.value,
+          lastSession: dayjs().toISOString(),
+          active: true,
+          attempts: 0,
+          user: { id: payload.id },
+        });
+        const savedToken = await this.personalTokenRepository.save(newToken);
+        this.logger.log(`Nuevo token personal activo creado para el usuario con ID: ${payload.id}`);
+        return savedToken;
+      }
+    } catch (error) {
+      this.logger.error(`Error al refrescar token personal activo para el usuario con ID: ${payload.id}`, error.stack);
+      throw error;
     }
   }
 }
