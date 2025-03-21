@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMan
 import { Rol } from './rol.entity';
 import { PersonalToken } from './personal-token.entity';
 import { PasswordResetToken } from './password-reset-token.entity';
+import { Municipio } from './municipio.entity';
 
 @Entity('usuarios')
 export class User {
@@ -20,6 +21,10 @@ export class User {
   @ManyToOne(() => Rol, (rol) => rol.usuarios)
   @JoinColumn({ name: 'rol_id' })
   rol: Rol;
+
+  @ManyToOne(() => Municipio, { nullable: true }) // Relación con Municipio, puede ser nulo
+  @JoinColumn({ name: 'municipio_id' }) // Columna municipio_id en la tabla
+  municipio: Municipio;
 
   @Column({ type: 'varchar', length: 20, nullable: true }) // Agregado
   dni: string;

@@ -163,7 +163,7 @@ export class UsersService {
    * @throws {BadRequestException} - If the email is already registered.
    */
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const { nombre, email, password, rolId, dni } = createUserDto;
+    const { nombre, email, password, rolId, dni, municipioId } = createUserDto;
 
     // Verificar si el email ya existe
     const existingUser = await this.userRepository.findOne({ where: { email } });
@@ -181,6 +181,7 @@ export class UsersService {
       email,
       password: hashedPassword,
       rol: { id: rolId },
+      municipio: { id: municipioId },
       dni,
     });
 
