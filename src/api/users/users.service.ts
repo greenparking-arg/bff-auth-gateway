@@ -61,7 +61,7 @@ export class UsersService {
     try {
       const user = await this.userRepository.findOne({
         where: { email },
-        relations: ['rol', 'company', 'logisticsCompany'],
+        relations: ['rol', 'municipio'],
       });
       if (user) {
         this.logger.log(`Usuario encontrado con email: ${email}`);
@@ -142,7 +142,7 @@ export class UsersService {
       }
       const user = await this.userRepository.findOne({
         where: { id: personalToken.user.id },
-        relations: ['rol', 'company', 'logisticsCompany'],
+        relations: ['rol', 'municipio'],
       });
       this.logger.log(`Usuario encontrado para el token: ${payload.value}`);
       return user;
