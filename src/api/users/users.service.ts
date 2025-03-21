@@ -110,7 +110,7 @@ export class UsersService {
     try {
       const roleWithPermisos = await this.rolRepository.findOne({
         where: { id: role.id },
-        relations: ['Permisos'],
+        relations: ['permisos'],
       });
       if (roleWithPermisos) {
         this.logger.log(`Permisos encontrados para el rol con ID: ${role.id}`);
