@@ -52,7 +52,7 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: { email },
-      relations: ['rol', 'company', 'logisticsCompany'], // Ajusta según las relaciones en tu entidad
+      relations: ['rol','municipio'],
     });
   }
 
@@ -100,7 +100,7 @@ export class UsersService {
 
     return this.userRepository.findOne({
       where: { id: personalToken.user.id },
-      relations: ['rol', 'company', 'logisticsCompany'], // Ajusta según las relaciones
+      relations: ['rol', 'municipio'], // Ajusta según las relaciones
     });
   }
 
