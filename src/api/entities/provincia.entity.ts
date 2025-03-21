@@ -3,8 +3,8 @@ import { Municipio } from './municipio.entity'; // Ajusta la ruta según tu estr
 
 @Entity('provincias')
 export class Provincia {
-  @PrimaryGeneratedColumn('uuid') // Clave primaria de tipo UUID
-  id: string;
+  @PrimaryGeneratedColumn() // Clave primaria de tipo UUID
+  id: number;
 
   @Column({
     type: 'character varying',

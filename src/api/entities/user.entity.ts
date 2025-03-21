@@ -5,8 +5,8 @@ import { PasswordResetToken } from '../auth/schemas/password-reset-token.schema'
 
 @Entity('usuarios')
 export class User {
-  @PrimaryGeneratedColumn('uuid') // Clave primaria de tipo UUID
-  id: string;
+  @PrimaryGeneratedColumn() // Clave primaria de tipo UUID
+  id: number;
 
   @Column({ length: 100 })
   nombre: string;

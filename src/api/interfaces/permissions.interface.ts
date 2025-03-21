@@ -1,5 +1,5 @@
 export interface Permiso {
-  id: string;
+  id: number;
   nombre_publico: string;
   nombre: string;
   grupo_permisos: string;

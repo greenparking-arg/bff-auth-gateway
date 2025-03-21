@@ -4,8 +4,8 @@ import { Permiso } from '../interfaces/permissions.interface';
 
 @Entity('roles')
 export class Rol {
-  @PrimaryGeneratedColumn('uuid') // Clave primaria de tipo UUID
-  id: string;
+  @PrimaryGeneratedColumn() // Clave primaria de tipo UUID
+  id: number;
 
   @Column({ length: 50, unique: true })
   nombre: string; // Ejemplo: 'admin', 'operador'

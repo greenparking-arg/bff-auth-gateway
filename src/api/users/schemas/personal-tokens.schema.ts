@@ -12,7 +12,7 @@ import { User } from '../../entities/user.entity'; // Ajusta la ruta según tu e
 @Entity('personal_tokens')
 export class PersonalToken {
   @PrimaryGeneratedColumn('uuid') // Usa UUID como clave primaria
-  id: string;
+  id: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   token: string;

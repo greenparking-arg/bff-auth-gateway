@@ -11,8 +11,8 @@ import { User } from './user.entity'; // Ajusta la ruta según tu estructura
 
 @Entity('personal_tokens') // Nombre de la tabla en PostgreSQL
 export class PersonalToken {
-  @PrimaryGeneratedColumn('uuid') // Clave primaria de tipo UUID
-  id: string;
+  @PrimaryGeneratedColumn() // Clave primaria de tipo UUID
+  id: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   token: string;

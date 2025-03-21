@@ -62,7 +62,7 @@ export class UsersService {
    * @param {number} id - The unique identifier of the user.
    * @return {Promise<User | null>} A promise that resolves to the user if found, or null if not found.
    */
-  async findById(id: string): Promise<User | null> {
+  async findById(id: number): Promise<User | null> {
     return this.userRepository.findOne({ where: { id } });
   }
 

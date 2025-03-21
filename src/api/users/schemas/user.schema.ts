@@ -5,7 +5,7 @@ import { Municipio } from '../../entities/municipio.entity'; // Ajusta la ruta s
 @Entity('usuarios') // Nombre correcto de la tabla
 export class User {
   @PrimaryGeneratedColumn('uuid') // Clave primaria de tipo UUID
-  id: string;
+  id: number;
 
   @Column({ type: 'varchar', length: 100, nullable: false }) // Nombre, no nulo
   nombre: string;

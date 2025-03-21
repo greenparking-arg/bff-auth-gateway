@@ -11,8 +11,8 @@ import { User } from '../../entities/user.entity'; // Ajusta la ruta a tu entida
 
 @Entity('password_reset_tokens')
 export class PasswordResetToken {
-  @PrimaryGeneratedColumn('uuid') // Clave primaria de tipo UUID
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   token: string;

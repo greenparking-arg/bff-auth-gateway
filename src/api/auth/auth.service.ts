@@ -15,7 +15,7 @@ import { CreatePdfService } from '../../services/create-pdf.service';
 import * as crypto from 'node:crypto';
 
 export interface Payload {
-  id: string;
+  id: number;
   name: string;
   email: string;
   role: Rol;

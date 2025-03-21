@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('roles')
 export class Rol {
   @PrimaryGeneratedColumn('uuid') // Clave primaria de tipo UUID
-  id: string;
+  id: number;
 
   @Column({
     type: 'character varying',
