@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { User } from './user.entity';
 import { Permisos } from './permisos.entity';
 
@@ -13,6 +13,7 @@ export class Rol {
   @OneToMany(() => User, (usuario) => usuario.rol)
   usuarios: User[];
 
-  @Column({ type: 'jsonb', nullable: true })
-  permisos: Permisos[]; // Ejemplo: { 'users': ['create', 'read', 'update', 'delete'] }
+  @ManyToMany(() => Permisos, (permiso) => permiso.roles)
+  @JoinTable() // Crea una tabla de unión automáticamente (ej. roles_permisos)
+  permisos: Permisos[];
 }
